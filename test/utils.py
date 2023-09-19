@@ -1,19 +1,31 @@
-def is_ting_pai(hand_tiles):
-    # 统计每张牌的数量
-    tile_count = [0] * 34
-    for tile in hand_tiles:
-        tile_count[tile] += 1
+from .config import HandCard
 
-    # 遍历每一张牌，尝试判断是否能够打出这张牌后听牌
-    for tile in range(34):
-        if tile_count[tile] < 4:
-            # 打出这张牌后，手牌数+1，再进行判断
-            tile_count[tile] += 1
-            if can_ting(tile_count):
-                return True
-            tile_count[tile] -= 1
+
+def is_ting_pai(hand_tiles: HandCard):
+    """判断是否听牌"""
+    count_melds(hand_tiles.wan)
 
     return False
+
+
+def count_melds(pai):
+    meld_count = 0
+
+    # 判断顺子
+    for i in range(7):
+        if pai[i] > 0 and pai[i + 1] > 0 and pai[i + 2] > 0:
+            meld_count += 1
+            pai[i] -= 1
+            pai[i + 1] -= 1
+            pai[i + 2] -= 1
+
+    # 判断刻子
+    for i in range(len(pai)):
+        if pai[i] >= 3:
+            meld_count += 1
+            pai[i] -= 3
+
+    return meld_count
 
 
 def can_ting(tile_count):
